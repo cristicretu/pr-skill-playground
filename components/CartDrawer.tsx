@@ -5,12 +5,14 @@ import type { Product } from "@/lib/products";
 export type CartLine = { product: Product; qty: number };
 
 export function CartDrawer({ open, lines, onClose }: { open: boolean; lines: CartLine[]; onClose: () => void }) {
-  if (!open) return null;
   const total = lines.reduce((sum, l) => sum + l.product.price * l.qty, 0);
 
   return (
-    <div className="scrim" onClick={onClose}>
-      <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label="Cart">
+    // Stays mounted so it can slide out; `inert` keeps it out of focus and the
+    // a11y tree while closed, and CSS hides it once the exit transition ends.
+    <div className="cart-layer" data-open={open || undefined} inert={!open}>
+      <div className="scrim" onClick={onClose} />
+      <aside className="drawer" aria-label="Cart">
         <header className="drawer-head">
           <h2>Your cart</h2>
           <button onClick={onClose} aria-label="Close cart" data-testid="close-cart">×</button>
